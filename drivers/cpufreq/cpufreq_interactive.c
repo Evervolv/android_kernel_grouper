@@ -294,7 +294,7 @@ static void cpufreq_interactive_timer(unsigned long data)
 
 	if (pcpu->target_freq >= hispeed_freq &&
 	    new_freq > pcpu->target_freq &&
-	    cputime64_sub(now, pcpu->hispeed_validate_time) < above_hispeed_delay_val) {
+	    now - pcpu->hispeed_validate_time < above_hispeed_delay_val) {
 		trace_cpufreq_interactive_notyet(
 			data, cpu_load, pcpu->target_freq,
 			pcpu->policy->cur, new_freq);
@@ -318,9 +318,7 @@ static void cpufreq_interactive_timer(unsigned long data)
 	 * floor frequency for the minimum sample time since last validated.
 	 */
 	if (new_freq < pcpu->floor_freq) {
-		if (cputime64_sub(now,
-				  pcpu->floor_validate_time)
-		    < min_sample_time) {
+		if (now - pcpu->floor_validate_time < min_sample_time) {
 			trace_cpufreq_interactive_notyet(
 				data, cpu_load, pcpu->target_freq,
 				pcpu->policy->cur, new_freq);
